@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html  lang="pl">
+
+<head>
+<meta charset="utf-8">
+    
+<title>Tworzenie konta</title>
+</head>
+<body>
+<div class="column">
+<form action="/changepasswd" method="post" enctype="multipart/form-data">
+    <table>
+    <tr><th><label for="login">login: </label></th><td><input type="text" id="login" placeholder="login" name="login"></td></tr>
+    <tr><th><label for="oldpassword">old password: </label></th><td><input type="password" id="oldpassword" placeholder="old password" name="oldpassword"></td></tr>
+	<tr><th><label for="password">password: </label></th><td><input type="password" id="password" placeholder="password" name="password"></td></tr>
+	<tr><th><label for="password2">repeat password: </label></th><td><input type="password" id="password2" placeholder="repeat password"></td></tr>
+    <tr><th></th><td><input type="submit" id="submit"></td></tr>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </table>
+</form>
+</div>
+<script >
+    document.getElementById('password2').addEventListener("input", function() {
+    var x = document.getElementById("password2");
+    if(document.getElementById('password').value==x.value){
+      x.setCustomValidity("");
+      if((a=document.getElementById('err3'))!=null){
+        a.parentNode.removeChild(a);
+      }
+    }
+    else{
+      x.setCustomValidity("błędne dane");
+      if(document.getElementById('err3')==null){
+      var div = document.createElement("div");
+      div.id = 'err3';
+      div.className = 'error';
+      div.innerHTML = "hasło się nie zgadza";
+      x.parentNode.insertBefore(div, x.nextSibling);}
+    }
+  });
+  
+  document.getElementById('password').addEventListener("input", function() {
+    var x = document.getElementById("password");
+    if(!/^[a-z]+$/.test(x.value)&&!/^[A-Z]+$/.test(x.value)&&x.value.length>=8||x.value==""||x.value==""){
+      x.setCustomValidity("");
+      if((a=document.getElementById('err5'))!=null){
+        a.parentNode.removeChild(a);
+      }
+        var x2 = document.getElementById("password2");
+    if(x.value==x2.value){
+      x2.setCustomValidity("");
+      if((a=document.getElementById('err3'))!=null){
+        a.parentNode.removeChild(a);
+      }
+    }
+    else{
+      x2.setCustomValidity("błędne dane");
+      if(document.getElementById('err3')==null){
+      var div = document.createElement("div");
+      div.id = 'err3';
+      div.className = 'error';
+      div.innerHTML = "hasło się nie zgadza";
+      x2.parentNode.insertBefore(div, x2.nextSibling);}
+    }
+    }
+    else{
+      x.setCustomValidity("błędne dane");
+      if(document.getElementById('err5')==null){
+      var div = document.createElement("div");
+      div.id = 'err5';
+      div.className = 'error';
+      div.innerHTML = "hasło musi mieć przynajmniej 8 znaków i zawierać małe i wielkie litery";
+      x.parentNode.insertBefore(div, x.nextSibling);}
+    }
+  });
+  document.getElementById('submit').addEventListener("click", function(e) {
+    var x = document.getElementById("submit");
+    var x2 = document.getElementById("oldpassword");
+    var x3 = document.getElementById("login");
+    var x4 = document.getElementById("password");
+
+
+    if(x3.value.length!=0&&x4.value.length!=0&&x2.value.length!=0){
+        x.setCustomValidity("");
+        if((a=document.getElementById('err7'))!=null){
+        a.parentNode.removeChild(a);
+        }
+    }
+    else{
+        x.setCustomValidity("błędne dane");
+        if(document.getElementById('err7')==null){
+        var div = document.createElement("div");
+        div.id = 'err7';
+        div.className = 'error';
+        div.innerHTML = "wypełnij formularz";
+        x.parentNode.insertBefore(div, x.nextSibling);}
+            e.preventDefault();
+        return false;
+    }
+});
+</script>
+</body>
+</html>

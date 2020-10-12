@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      var interrvalID = window.setInterval(CheckChange,1000)
+      var changeid = null;
+      function CheckChange(){
+        var user = document.getElementById('privuser').value;
+        fetch(user+'/status')
+          .then((response) => {
+            return response.json();
+          })
+          .then((js) => {
+            if(changeid==null){
+              changeid=js;
+            } else {
+              if(changeid!=js){
+                window.location.reload(true);
+              }
+            }
+
+          })
+      }
+    </script>
+
+  </head>
+  <body>
+    <input type="hidden" id='privuser' name="user"    value="{{user}}" />
+  	{% for pub in publications %}
+  	Author: {{pub.author}}
+
+    <form style ="display: inline-block" action="/delete" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="resource" value="{{pub.id}}"/>
+      <input type="hidden" name="user"    value="{{user}}" />
+      <input type="submit" value="delete publication"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    <div>
+    Title: {{pub.title}}
+    </div>
+    <div>
+    Year: {{pub.year}}
+    </div>
+    <b>{{pub.filename}}</b>
+    <form style ="display: inline-block" action="/download" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="file" value="{{pub.filename}}"/>
+      <input type="hidden" name="user"    value="{{user}}" />
+      <input type="submit" value="download"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    <div>
+      References:<br>
+      {% for ref in pub.references %}
+      <b>{{ref.filename}}</b>
+      <form style ="display: inline-block" action="/downloadref" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="file" value="{{ref.filename}}"/>
+        <input type="hidden" name="user"    value="{{user}}" />
+        <input type="hidden" name="id"    value="{{pub.id}}" />
+        <input type="submit" value="download"/>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      </form>
+      <form style ="display: inline-block" action="/deleteref" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="resource" value="{{ref.filename}}"/>
+        <input type="hidden" name="user"    value="{{user}}" />
+        <input type="hidden" name="id"    value="{{pub.id}}" />
+        <input type="submit" value="delete"/>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      </form>
+      {% endfor %}
+    </div>
+    <div>
+      <form style ="display: inline-block" action="/uploadref" method="POST" enctype="multipart/form-data">
+        Dodaj referencję:
+        <input type="file" name="file"/>
+        <input type="hidden" name="user"    value="{{user}}" />
+        <input type="hidden" name="id"    value="{{pub.id}}" />
+        <input type="submit" value="add"/>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      </form>
+    </div>
+  	{% endfor %}
+  	<form action="/upload" method="POST" enctype="multipart/form-data">
+  		Dodaj publikację:<br>
+      Author:<input type="text" name="author"/>
+      Title:<input type="text" name="title"/>
+      Year:<input type="text" name="year"/>
+      <input type="file" name="file"/>
+      <input type="checkbox" name="public" value="yes">public</input>
+      <input type="hidden" name="user"    value="{{user}}" />
+      <input type="submit" value="add"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    <a href="/listing">inni użytkownicy</a>
+    <a href="/logout"> logout </a>
+  </body>
+  </html>

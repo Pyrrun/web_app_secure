@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+  	{% for pub in publications %}
+  	Author: {{pub.author}}
+    <div>
+    Title: {{pub.title}}
+    </div>
+    <div>
+    Year: {{pub.year}}
+    </div>
+    <b>{{pub.filename}}</b>
+    <form style ="display: inline-block" action="/download" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="file" value="{{pub.filename}}"/>
+      <input type="hidden" name="user"    value="{{user}}" />
+      <input type="submit" value="download"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    <div>
+      References:<br>
+      {% for ref in pub.references %}
+      <b>{{ref.filename}}</b>
+      <form style ="display: inline-block" action="/downloadref" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="file" value="{{ref.filename}}"/>
+        <input type="hidden" name="user"    value="{{user}}" />
+        <input type="hidden" name="id"    value="{{pub.id}}" />
+        <input type="submit" value="download"/>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      </form>
+      {% endfor %}
+    </div>
+      {% endfor %}
+    <a href="/listing">inni użytkownicy</a>
+    <a href="/logout"> logout </a>
+  </body>
+  </html>

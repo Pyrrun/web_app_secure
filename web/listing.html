@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  </head>
+  <body>
+  	{% for user in users%}
+    <div>  {{user.login}}
+    <form style ="display: inline-block" action="/others" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="user"    value="{{user.login}}" />
+      <input type="submit" value="zobacz"/>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    </form>
+    </div>
+    {% endfor %}
+    <a href="/welcome">Mój katalog</a>
+    <a href="/logout"> logout </a>
+  </body>
+  </html>
